@@ -42,9 +42,13 @@ public class User extends BaseClass{
     private Gender gender;
 
     @OneToOne
+   @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    private Wallet wallet;
+    @OneToOne
     @JoinColumn(name = "nextOfKin_id", referencedColumnName = "id")
     private NextOfKin nextOfKin;
 
+    private boolean completedProfile;
     @JsonManagedReference
     @OneToMany(mappedBy = "givenBy")
     private List<Review> reviewList = new ArrayList<>();

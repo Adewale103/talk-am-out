@@ -10,7 +10,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.List;
 
 @Setter
 @Getter
@@ -20,7 +19,10 @@ import java.util.List;
 @DiscriminatorValue(value = "therapist")
 public class Therapist extends User{
     private String licenceNumber;
-    private String about;
+    private String professionalStatement;
+    private String messageToClients;
+    private String specialty;
+    private String treatmentApproaches;
     private int yearsOfExperience;
     @Enumerated(EnumType.STRING)
     private LicenseType licenseType;
