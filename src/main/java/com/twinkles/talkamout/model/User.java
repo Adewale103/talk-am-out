@@ -2,6 +2,7 @@ package com.twinkles.talkamout.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.twinkles.talkamout.enums.Gender;
+import com.twinkles.talkamout.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,6 +48,10 @@ public class User extends BaseClass{
     @OneToOne
     @JoinColumn(name = "nextOfKin_id", referencedColumnName = "id")
     private NextOfKin nextOfKin;
+
+    @Enumerated
+    @Column(name = "role", insertable = true, updatable = true)
+    private Role role;
 
     private boolean completedProfile;
     @JsonManagedReference

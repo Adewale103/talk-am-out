@@ -15,7 +15,8 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue(value = "client")
 public class Client extends BaseClass{
-    private boolean hadTherapyHistory;
+    private boolean hasTherapyHistory;
+
 
 
 }
