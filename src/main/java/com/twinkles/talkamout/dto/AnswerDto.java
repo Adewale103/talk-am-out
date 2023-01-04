@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionDto {
-    private String question;
+@Builder
+public class AnswerDto {
+    private String response;
     private int questionNumber;
+    private Long questionId;
 }

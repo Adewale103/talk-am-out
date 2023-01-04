@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+
 
 @Getter
 @Setter
@@ -17,9 +16,4 @@ import javax.persistence.OneToOne;
 public class Question extends BaseClass {
     private String question;
     private int questionNumber;
-
-    @OneToOne
-    @JoinColumn(name = "answer_id", referencedColumnName = "id")
-    private Answer answer;
-
 }

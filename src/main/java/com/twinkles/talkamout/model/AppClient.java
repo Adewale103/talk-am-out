@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue(value = "client")
-public class Client extends BaseClass{
+public class AppClient extends User{
     private boolean hasTherapyHistory;
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
