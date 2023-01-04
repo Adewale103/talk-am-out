@@ -26,4 +26,5 @@ public class Therapist extends User{
     private int yearsOfExperience;
     @Enumerated(EnumType.STRING)
     private LicenseType licenseType;
+    private boolean isAvailable;
 }
