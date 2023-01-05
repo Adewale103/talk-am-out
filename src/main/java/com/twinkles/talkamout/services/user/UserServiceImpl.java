@@ -6,6 +6,7 @@ import com.twinkles.talkamout.dto.TherapistDto;
 import com.twinkles.talkamout.dto.request.RegisterClientRequest;
 import com.twinkles.talkamout.dto.request.RegisterTherapistRequest;
 import com.twinkles.talkamout.dto.response.ViewTherapistProfileResponse;
+import com.twinkles.talkamout.enums.Role;
 import com.twinkles.talkamout.exceptions.InvalidLicenceNumberException;
 import com.twinkles.talkamout.exceptions.TalkAmOutException;
 import com.twinkles.talkamout.exceptions.UserAlreadyExistException;
@@ -41,6 +42,7 @@ public class UserServiceImpl implements UserService{
         }
         Therapist therapist = new Therapist();
         BeanUtils.copyProperties(registerTherapistRequest, therapist);
+        therapist.setRole(Role.THERAPIST);
         Therapist savedTherapist = userRepository.save(therapist);
         TherapistDto therapistDto = new TherapistDto();
         BeanUtils.copyProperties(savedTherapist, therapistDto);
@@ -61,6 +63,7 @@ public class UserServiceImpl implements UserService{
                         orElseThrow(()-> new TalkAmOutException("Question with question number "+answerDto.getQuestionNumber()+" not found",404)))
                 .build()).toList();
         client.setQuestionResponses(answers);
+        client.setRole(Role.CLIENT);
         AppClient savedClient = userRepository.save(client);
         ClientDto clientDto = new ClientDto();
         BeanUtils.copyProperties(savedClient,clientDto);
@@ -76,5 +79,16 @@ public class UserServiceImpl implements UserService{
         ViewTherapistProfileResponse viewTherapistProfileResponse = new ViewTherapistProfileResponse();
         BeanUtils.copyProperties(foundTherapist.get(), viewTherapistProfileResponse);
         return viewTherapistProfileResponse;
+    }
+
+    @Override
+    public List<TherapistDto> findTherapistByLocation(String location) {
+        Optional<User> users = userRepository.findTherapistByAddress_State(location);
+        return users.stream().filter(user -> user.getRole().equals(Role.THERAPIST)).map(user ->
+                TherapistDto.builder()
+                        .id(user.getId())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .yearsOfExperience(user.));
     }
 }

@@ -15,5 +15,5 @@ public interface UserService {
  TherapistDto registerTherapist(RegisterTherapistRequest registerTherapistRequest);
  ClientDto registerClient(RegisterClientRequest registerClientRequest, List<AnswerDto> answerDtoList);
  ViewTherapistProfileResponse viewTherapistProfile(String email);
-
+ List<TherapistDto> findTherapistByLocation(String Location);
 }
