@@ -3,6 +3,7 @@ package com.twinkles.talkamout.services.user;
 import com.twinkles.talkamout.dto.AnswerDto;
 import com.twinkles.talkamout.dto.ClientDto;
 import com.twinkles.talkamout.dto.TherapistDto;
+import com.twinkles.talkamout.dto.request.CompleteTherapistProfileRequest;
 import com.twinkles.talkamout.dto.request.RegisterClientRequest;
 import com.twinkles.talkamout.dto.request.RegisterTherapistRequest;
 import com.twinkles.talkamout.dto.response.ViewTherapistProfileResponse;
@@ -15,6 +16,7 @@ import com.twinkles.talkamout.model.AppClient;
 import com.twinkles.talkamout.model.Therapist;
 import com.twinkles.talkamout.model.User;
 import com.twinkles.talkamout.repository.QuestionRepository;
+import com.twinkles.talkamout.repository.TherapistRepository;
 import com.twinkles.talkamout.repository.UserRepository;
 import com.twinkles.talkamout.utils.validators.TalkAmOutValidator;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final TalkAmOutValidator talkAmOutValidator;
     private final QuestionRepository questionRepository;
+    private final TherapistRepository therapistRepository;
 
     @Override
     public TherapistDto registerTherapist(RegisterTherapistRequest registerTherapistRequest) {
@@ -44,13 +47,23 @@ public class UserServiceImpl implements UserService{
         BeanUtils.copyProperties(registerTherapistRequest, therapist);
         therapist.setRole(Role.THERAPIST);
         Therapist savedTherapist = userRepository.save(therapist);
-        TherapistDto therapistDto = new TherapistDto();
-        BeanUtils.copyProperties(savedTherapist, therapistDto);
-        return therapistDto;
+        return getTherapistDtoFrom(savedTherapist);
+    }
+
+    private static TherapistDto getTherapistDtoFrom(Therapist savedTherapist) {
+        return TherapistDto.builder()
+                .id(savedTherapist.getId())
+                .firstName(savedTherapist.getFirstName())
+                .lastName(savedTherapist.getLastName())
+                .licenceNumber(savedTherapist.getLicenceNumber())
+                .email(savedTherapist.getEmail())
+                .yearsOfExperience(savedTherapist.getYearsOfExperience())
+                .build();
     }
 
     @Override
-    public ClientDto registerClient(RegisterClientRequest registerClientRequest, List<AnswerDto> answerDtoList) {
+    public ClientDto registerClient(RegisterClientRequest registerClientRequest) {
+        List<AnswerDto> answerDtoList = registerClientRequest.getAnswerDtoList();
         if(userRepository.existsByEmail(registerClientRequest.getEmail())){
             throw new UserAlreadyExistException("Client with email "+registerClientRequest.getEmail()+" already exist", 400);
         }
@@ -65,9 +78,12 @@ public class UserServiceImpl implements UserService{
         client.setQuestionResponses(answers);
         client.setRole(Role.CLIENT);
         AppClient savedClient = userRepository.save(client);
-        ClientDto clientDto = new ClientDto();
-        BeanUtils.copyProperties(savedClient,clientDto);
-        return clientDto;
+        return ClientDto.builder()
+                .id(savedClient.getId())
+                .email(savedClient.getEmail())
+                .firstName(savedClient.getFirstName())
+                .lastName(savedClient.getLastName())
+                .build();
     }
 
     @Override
@@ -76,19 +92,44 @@ public class UserServiceImpl implements UserService{
         if(foundTherapist.isEmpty()){
             throw new UserAlreadyExistException("Therapist with email "+email+" not found", 404);
         }
+        if(!foundTherapist.get().getRole().equals(Role.THERAPIST)){
+            throw new TalkAmOutException("Email provided is not for a therapist profile", 404);
+        }
         ViewTherapistProfileResponse viewTherapistProfileResponse = new ViewTherapistProfileResponse();
         BeanUtils.copyProperties(foundTherapist.get(), viewTherapistProfileResponse);
         return viewTherapistProfileResponse;
     }
 
     @Override
+    public TherapistDto completeTherapistProfile(String email, CompleteTherapistProfileRequest completeTherapistProfileRequest) {
+        Optional<User> foundTherapist = userRepository.findByEmail(email);
+        if(foundTherapist.isEmpty()){
+            throw new UserAlreadyExistException("Therapist with email "+email+" not found", 404);
+        }
+        Therapist therapist = (Therapist) foundTherapist.get();
+        BeanUtils.copyProperties(completeTherapistProfileRequest, therapist);
+        userRepository.save(therapist);
+        return  TherapistDto.builder()
+                .id(therapist.getId())
+                .firstName(therapist.getFirstName())
+                .lastName(therapist.getLastName())
+                .yearsOfExperience(therapist.getYearsOfExperience())
+                .licenceNumber(therapist.getLicenceNumber())
+                .build();
+    }
+
+    @Override
     public List<TherapistDto> findTherapistByLocation(String location) {
-        Optional<User> users = userRepository.findTherapistByAddress_State(location);
+       List<Therapist> users = therapistRepository.findTherapistByAddress_State(location);
         return users.stream().filter(user -> user.getRole().equals(Role.THERAPIST)).map(user ->
                 TherapistDto.builder()
                         .id(user.getId())
                         .firstName(user.getFirstName())
                         .lastName(user.getLastName())
-                        .yearsOfExperience(user.));
+                        .yearsOfExperience(user.getYearsOfExperience())
+                        .licenceNumber(user.getLicenceNumber())
+                        .build()
+        ).toList();
     }
+
 }

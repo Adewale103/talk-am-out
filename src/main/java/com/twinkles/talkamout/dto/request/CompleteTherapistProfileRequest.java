@@ -1,31 +1,21 @@
-package com.twinkles.talkamout.model;
+package com.twinkles.talkamout.dto.request;
 
 import com.twinkles.talkamout.enums.LicenseType;
-import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
-@Setter
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@DiscriminatorValue(value = "therapist")
-public class Therapist extends User{
-    private String licenceNumber;
+public class CompleteTherapistProfileRequest {
     private String professionalStatement;
     private String messageToClients;
     private String specialty;
     private String treatmentApproaches;
-    private int yearsOfExperience;
-    @Enumerated(EnumType.STRING)
     private LicenseType licenseType;
     private boolean isAvailable;
     private String profileImageUrl;
