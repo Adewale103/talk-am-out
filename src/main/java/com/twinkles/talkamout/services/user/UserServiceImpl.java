@@ -11,10 +11,8 @@ import com.twinkles.talkamout.enums.Role;
 import com.twinkles.talkamout.exceptions.InvalidLicenceNumberException;
 import com.twinkles.talkamout.exceptions.TalkAmOutException;
 import com.twinkles.talkamout.exceptions.UserAlreadyExistException;
-import com.twinkles.talkamout.model.Answer;
-import com.twinkles.talkamout.model.AppClient;
-import com.twinkles.talkamout.model.Therapist;
-import com.twinkles.talkamout.model.User;
+import com.twinkles.talkamout.model.*;
+import com.twinkles.talkamout.repository.AddressRepository;
 import com.twinkles.talkamout.repository.QuestionRepository;
 import com.twinkles.talkamout.repository.TherapistRepository;
 import com.twinkles.talkamout.repository.UserRepository;
@@ -34,6 +32,7 @@ public class UserServiceImpl implements UserService{
     private final TalkAmOutValidator talkAmOutValidator;
     private final QuestionRepository questionRepository;
     private final TherapistRepository therapistRepository;
+    private final AddressRepository addressRepository;
 
     @Override
     public TherapistDto registerTherapist(RegisterTherapistRequest registerTherapistRequest) {
@@ -108,6 +107,11 @@ public class UserServiceImpl implements UserService{
         }
         Therapist therapist = (Therapist) foundTherapist.get();
         BeanUtils.copyProperties(completeTherapistProfileRequest, therapist);
+        Address address = new Address(completeTherapistProfileRequest.getStreetNumber(),
+                completeTherapistProfileRequest.getStreetName(), completeTherapistProfileRequest.getCity(), completeTherapistProfileRequest.getState(),
+                completeTherapistProfileRequest.getPostalCode(), completeTherapistProfileRequest.getCountry());
+        address.setUser(therapist);
+        addressRepository.save(address);
         userRepository.save(therapist);
         return  TherapistDto.builder()
                 .id(therapist.getId())

@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -35,9 +35,6 @@ public class User extends BaseClass{
 
     @Size(min = 8, max = 20)
     private String password;
-    @OneToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
-    private Address address;
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Gender gender;

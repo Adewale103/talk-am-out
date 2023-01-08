@@ -19,4 +19,10 @@ public class CompleteTherapistProfileRequest {
     private LicenseType licenseType;
     private boolean isAvailable;
     private String profileImageUrl;
+    private String streetNumber;
+    private String streetName;
+    private String city;
+    private String state;
+    private int postalCode;
+    private String country;
 }
