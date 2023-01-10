@@ -54,4 +54,6 @@ public class User extends BaseClass{
     @JsonManagedReference
     @OneToMany(mappedBy = "givenBy")
     private List<Review> reviewList = new ArrayList<>();
+    @OneToOne(mappedBy = "user")
+    private Address address;
 }
