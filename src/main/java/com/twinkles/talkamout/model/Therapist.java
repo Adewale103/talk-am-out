@@ -2,10 +2,7 @@ package com.twinkles.talkamout.model;
 
 import com.twinkles.talkamout.enums.LicenseType;
 import jdk.jfr.BooleanFlag;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -13,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 @Setter
+@Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
